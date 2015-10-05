@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import javax.servlet.annotation.WebServlet;
 
 import org.bluemix.challenge.ui.view.CustomerGridView;
+import org.bluemix.challenge.ui.view.DashboardView;
 import org.bluemix.challenge.ui.view.LoginView;
 
 import com.vaadin.annotations.PreserveOnRefresh;
@@ -32,7 +33,7 @@ public class MyUI extends UI {
         final Notification notification = new Notification("Login successful.", Type.TRAY_NOTIFICATION);
         notification.setDelayMsec(2000);
         notification.show(getPage());
-        setContent(new CustomerGridView());
+        setContent(new DashboardView());
         return null;
       }
     }).onLoginError(new Callable<Void>() {

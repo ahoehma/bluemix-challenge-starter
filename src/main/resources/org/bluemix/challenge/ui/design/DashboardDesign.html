@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;PAPER_WIDTH&quot;:1440,&quot;PAPER_HEIGHT&quot;:900,&quot;PAPER_SCROLL_LEFT&quot;:1698,&quot;PAPER_SCROLL_TOP&quot;:1948,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+ </head> 
+ <body> 
+  <v-css-layout style-name="root-layout dashboard-view-template-vaadin" responsive="true" width-full="true" _id="root_layout"> 
+   <v-label style-name="header-label" plain-text="">
+     General Vaadin Statistics 
+   </v-label> 
+   <v-css-layout style-name="dashboard-item" width="365px" height="140px"> 
+    <v-label style-name="header-label-small" size-auto="true" plain-text="">
+      Gender Statistics 
+    </v-label> 
+    <v-horizontal-layout width-full="true"> 
+     <v-label size-auto="true" plain-text="">
+       Men 
+     </v-label> 
+     <v-label size-auto="true" plain-text="" _id="men" :middle="" :right=""></v-label> 
+    </v-horizontal-layout> 
+    <v-horizontal-layout width-full="true"> 
+     <v-label size-auto="true" plain-text="">
+       Women 
+     </v-label> 
+     <v-label size-auto="true" plain-text="" _id="women" :middle="" :right=""></v-label> 
+    </v-horizontal-layout> 
+    <v-horizontal-layout width-full="true"> 
+     <v-label size-auto="true" plain-text="">
+       Other 
+     </v-label> 
+     <v-label size-auto="true" plain-text="" _id="other" :middle="" :right=""></v-label> 
+    </v-horizontal-layout> 
+   </v-css-layout> 
+  </v-css-layout>  
+ </body>
+</html>
