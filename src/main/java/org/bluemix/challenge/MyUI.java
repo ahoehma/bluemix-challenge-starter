@@ -1,90 +1,64 @@
 package org.bluemix.challenge;
 
+import java.util.concurrent.Callable;
+
 import javax.servlet.annotation.WebServlet;
 
-import org.bluemix.challenge.backend.Customer;
-import org.bluemix.challenge.backend.DummyDataService;
+import org.bluemix.challenge.ui.view.CustomerGridView;
+import org.bluemix.challenge.ui.view.LoginView;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.event.SelectionEvent;
-import com.vaadin.event.SelectionEvent.SelectionListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
-/**
- *
- */
+@SuppressWarnings("serial")
 @Theme("mytheme")
 @Widgetset("org.bluemix.challenge.MyAppWidgetset")
+@PreserveOnRefresh
 public class MyUI extends UI {
 
   @Override
   protected void init(VaadinRequest vaadinRequest) {
-
-    final VerticalLayout layout = new VerticalLayout();
-    layout.setMargin(true);
-    setContent(layout);
-
-    // goal 1
-    final BeanItemContainer<Customer> beanItemContainer = new BeanItemContainer<Customer>(Customer.class);
-    beanItemContainer.addAll(DummyDataService.createDemoService().findAll());
-    ComboBox combobox = new ComboBox(null, beanItemContainer);
-    layout.addComponent(combobox);
-
-    // goal 2
-    final Grid grid = new Grid(null, beanItemContainer);
-    layout.addComponent(grid);
-
-    // goal 3
-    grid.setSizeFull();
-    grid.setSelectionMode(SelectionMode.SINGLE);
-    grid.addSelectionListener(new SelectionListener() {
+    setContent(new LoginView().onLoginSuccessful(new Callable<Void>() {
 
       @Override
-      public void select(SelectionEvent event) {
-        // Q: why no type safety here?
-        // Object first = Iterables.getFirst(event.getSelected(), null);
-        // Q: not better - why no type safety here?
-        // Object first = Iterables.getFirst(grid.getSelectedRows(), null);
-        Optional<Customer> selectedCustomer = FluentIterable.from(event.getSelected()).transform(new Function<Object, Customer>() {
-
-          @Override
-          public Customer apply(Object input) {
-            // Q: why can not know grid about the concreted used container data
-            // source?
-            // here I got java.lang.ClassCastException:
-            // com.vaadin.data.util.BeanItem cannot be cast to
-            // org.bluemix.challenge.backend.Customer
-            // return (Customer) grid.getContainerDataSource().getItem(input);
-            // but this works?!
-            return beanItemContainer.getItem(input).getBean();
-          }
-        }).first();
-        if (selectedCustomer.isPresent()) {
-          Notification n = new Notification("You selected " + selectedCustomer.get(), Type.TRAY_NOTIFICATION);
-          n.setDelayMsec(2000);
-          n.show(getPage());
-        }
+      public Void call() throws Exception {
+        final Notification notification = new Notification("Login successful.", Type.TRAY_NOTIFICATION);
+        notification.setDelayMsec(2000);
+        notification.show(getPage());
+        setContent(new CustomerGridView());
+        return null;
       }
-    });
+    }).onLoginError(new Callable<Void>() {
+
+      int errorCount = 0;
+
+      @Override
+      public Void call() throws Exception {
+        if (errorCount <= 3) {
+          final Notification notification = new Notification("Login incorrect. Please try again.", Type.TRAY_NOTIFICATION);
+          notification.setDelayMsec(2000);
+          notification.show(getPage());
+        } else {
+          final Notification notification = new Notification("Try login 'vaadin' with password 'bluemix' ;-)", Type.TRAY_NOTIFICATION);
+          notification.setDelayMsec(2000);
+          notification.show(getPage());
+        }
+        errorCount++;
+        return null;
+      }
+    }));
   }
 
   @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
   @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
   public static class MyUIServlet extends VaadinServlet {
+    // nop
   }
 }
