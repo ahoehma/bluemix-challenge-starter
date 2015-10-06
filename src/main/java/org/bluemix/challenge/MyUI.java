@@ -4,14 +4,16 @@ import java.util.concurrent.Callable;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.bluemix.challenge.ui.view.ChartView;
 import org.bluemix.challenge.ui.view.CustomerGridView;
-import org.bluemix.challenge.ui.view.DashboardView;
 import org.bluemix.challenge.ui.view.LoginView;
+import org.bluemix.challenge.ui.view.MainView;
 
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Notification;
@@ -24,8 +26,22 @@ import com.vaadin.ui.UI;
 @PreserveOnRefresh
 public class MyUI extends UI {
 
+  private Navigator navigator;
+
   @Override
   protected void init(VaadinRequest vaadinRequest) {
+    
+ // Create a navigator to control the views
+    navigator = new Navigator(this, this);
+    
+    // Create and register the views
+    navigator.addView("login", LoginView.class);
+    navigator.addView("main", MainView.class);
+    navigator.addView("grid", CustomerGridView.class);
+    navigator.addView("login", LoginView.class);
+    navigator.addView("chart", ChartView.class);
+    navigator.navigateTo("login");
+    
     setContent(new LoginView().onLoginSuccessful(new Callable<Void>() {
 
       @Override
@@ -33,7 +49,7 @@ public class MyUI extends UI {
         final Notification notification = new Notification("Login successful.", Type.TRAY_NOTIFICATION);
         notification.setDelayMsec(2000);
         notification.show(getPage());
-        setContent(new DashboardView());
+        navigator.navigateTo("main");
         return null;
       }
     }).onLoginError(new Callable<Void>() {
