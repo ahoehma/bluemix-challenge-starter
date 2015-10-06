@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bluemix.challenge.backend.Customer.Gender;
+
 /**
  * A dummy data service that mimics a typical real world Java EE service. In
  your application, use DummyDataService.createDemoService() method to get a
@@ -158,6 +160,9 @@ public class DummyDataService {
                 cal.set(1930 + r.nextInt(70),
                         r.nextInt(11), r.nextInt(28));
                 contact.setBirthDate(cal.getTime());
+                
+                contact.setGender(r.nextBoolean()?Gender.Female:(r.nextBoolean()?Gender.Male:Gender.Other));
+                
                 contactService.save(contact);
             }
             instance = contactService;
