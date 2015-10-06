@@ -30,19 +30,17 @@ public class MyUI extends UI {
 
   @Override
   protected void init(VaadinRequest vaadinRequest) {
-    
- // Create a navigator to control the views
+
+    // Create a navigator to control the views
     navigator = new Navigator(this, this);
-    
+
     // Create and register the views
-    navigator.addView("login", LoginView.class);
-    navigator.addView("main", MainView.class);
+    navigator.addView("main", new MainView(navigator));
     navigator.addView("grid", CustomerGridView.class);
     navigator.addView("login", LoginView.class);
     navigator.addView("chart", ChartView.class);
-    navigator.navigateTo("login");
     
-    setContent(new LoginView().onLoginSuccessful(new Callable<Void>() {
+    navigator.addView("", new LoginView().onLoginSuccessful(new Callable<Void>() {
 
       @Override
       public Void call() throws Exception {
